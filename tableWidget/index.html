@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Tutorial: Hello Dojo!</title>
+</head>
+<body>
+    <div id="insert">&nbsp;</div>
+    <div id="grid"></div>
+    <!-- load Dojo -->
+    <script src="../dojo/dojo/dojo.js" data-dojo-config="async: true,
+            packages: [{
+	            name: 'widget',
+	            location: location.pathname.replace(/\/[^/]+$/, '') + '/widget'
+       		},
+       		{
+	            name: 'dgrid',
+	            location: location.pathname.replace(/\/[^/]+$/, '') + '../dojo/dgrid'
+       		}
+       		]">
+    </script>
+</body>
+</html>
+
+<script type="text/javascript">
+require(["dojo/dom", "dojo/domReady!", "widget"], function(dom, domReady, widget){
+	console.log(widget);
+    // var greeting = dom.byId("greeting");
+    // greeting.innerHTML += widget.works;
+
+    var wid = new TableWidget("insert");
+});
+</script>
