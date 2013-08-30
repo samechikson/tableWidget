@@ -5,6 +5,7 @@ define([
     "dojo/ready",
     "dojo/dom",
     "dojo/_base/xhr",
+    "dojo/date",
     "dgrid/Grid",
     "dgrid/extensions/Pagination",
     "dijit/_WidgetBase",
@@ -14,22 +15,23 @@ define([
 			ready,
 			dom,
 			xhr,
+			date,
 			Grid,
 			Pagination,
 			_WidgetBase){
     declare("TableWidget", [_WidgetBase], {
-    	day: 1,
+    	day: new Date(),
 	    
         constructor: function(domNode){
         	// var data = this.getData();
         	// console.log("data", data);
         	this.data = [
-				{ first: "Bob", last: "Barker", day: 1 },
-				{ first: "Vanna", last: "White", day: 1 },
-				{ first: "Pat", last: "Sajak", day: 2 }
+				{ first: "Bob", last: "Barker", day: new Date()},
+				{ first: "Vanna", last: "White", day: new Date()},
+				{ first: "Pat", last: "Sajak", day: date.add(new Date(), "day", 1) }
 			];
-        	this.makeTable();
-        	this.domNode = domConstruct.create("p", {innerHTML: "This is Construced in the p tag."}, dom.byId(domNode))
+        	this.domNode = dom.byId(domNode);
+        	this.makeGrid();
         },
 
         getData: function(){
@@ -42,8 +44,7 @@ define([
 		  return d;
         },
 
-        makeTable: function(){
-
+        makeGrid: function(){
         	var columns = {
 		        first: {
 		            label: "First Name"
@@ -59,10 +60,10 @@ define([
 		    this.grid.renderArray(data);
         },
 
-        getdataForDate: function(date){
+        getdataForDate: function(dateGiven){
         	var returnThis = [];
         	for (var obj in this.data){
-        		if (this.data[obj].day == date)
+        		if (date.compare(this.data[obj].day, dateGiven, "date") == 0)
         			returnThis.push(this.data[obj])
         	}
 
@@ -72,19 +73,35 @@ define([
 
         buildRendering: function(){
             // create the DOM for this widget
-            this.next = domConstruct.create("button", {innerHTML: "day " + this.day}, this.domNode, "end");
+            this.title = domConstruct.create("h2", {innerHTML: new Date().toUTCString()}, this.domNode, "end")
+
+            this.previous = domConstruct.create("button", {innerHTML: "previous"}, this.domNode, "end");
+            this.today = domConstruct.create("button", {innerHTML: "today"}, this.domNode, "end");
+            this.next = domConstruct.create("button", {innerHTML: "next"}, this.domNode, "end");
         },
 
         postCreate: function(){
-            // every time the user clicks the button, increment the counter
-
-            this.connect(this.next, "onclick", "changeDay");
+            this.connect(this.next, "onclick", "addDay");
+            this.connect(this.today, "onclick", "todayDay");
+            this.connect(this.previous, "onclick", "subtractDay");
         },
 
-        changeDay: function(){
-        	this.day++;
-        	this.next.innerHTML = "day " + this.day;
+        addDay: function(){
+        	this.day = date.add(this.day, "day", 1);
+        	this.reloadGrid();
+        },
 
+        subtractDay: function(){
+        	this.day = date.add(this.day, "day", -1);
+        	this.reloadGrid();
+        },
+
+        todayDay: function(){
+        	this.day = new Date();
+        	this.reloadGrid();
+        },
+
+        reloadGrid: function(){
         	this.grid.refresh();
         	var data = this.getdataForDate(this.day);
         	this.grid.renderArray(data);
