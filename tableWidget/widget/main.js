@@ -6,6 +6,7 @@ define([
     "dojo/dom",
     "dojo/_base/xhr",
     "dojo/date",
+    "dojo/date/locale",
     "dgrid/Grid",
     "dgrid/extensions/Pagination",
     "dijit/_WidgetBase",
@@ -16,6 +17,7 @@ define([
 			dom,
 			xhr,
 			date,
+			locale,
 			Grid,
 			Pagination,
 			_WidgetBase){
@@ -23,41 +25,54 @@ define([
     	day: new Date(),
 	    
         constructor: function(domNode){
-        	// var data = this.getData();
-        	// console.log("data", data);
-        	this.data = [
-				{ first: "Bob", last: "Barker", day: new Date()},
-				{ first: "Vanna", last: "White", day: new Date()},
-				{ first: "Pat", last: "Sajak", day: date.add(new Date(), "day", 1) }
-			];
-        	this.domNode = dom.byId(domNode);
-        	this.makeGrid();
+        	var _this = this;
+        	var data = this.getData();
+        	console.log("data", data);
+	        this.domNode = dom.byId(domNode);
+	        this.setupGrid();
+
+        	data.then(function(data){
+        		_this.data = data;
+        		for (var obj in _this.data){
+        			var aDay = _this.data[obj].OccurrenceEndTime;
+        			// console.log("day", aDay);
+        			// console.log("day parsed", new Date(Date.parse(aDay)));
+        			
+        			_this.data[obj].day = new Date(Date.parse(aDay));
+        		}
+
+        		console.log(_this.data);
+	        	_this.reloadGrid();
+        	})
+   			// this.data = [
+			// 	{ first: "Bob", last: "Barker", day: new Date()},
+			// 	{ first: "Vanna", last: "White", day: new Date()},
+			// 	{ first: "Pat", last: "Sajak", day: date.add(new Date(), "day", 1) }
+			// ];
         },
 
         getData: function(){
         	// get some data, convert to JSON
 		  var d = xhr.get({
-		        url:"http://api.serviceu.com/rest/events/occurrences?orgKey=963d555c-3a00-4cbd-b08a-acc2c0fadc00&nextDays=2&format=json",
+		        //url:"http://api.serviceu.com/rest/events/occurrences?orgKey=963d555c-3a00-4cbd-b08a-acc2c0fadc00&nextDays=2&format=json",
+		        url: "widget/samplejson.json",
 		        handleAs:"json"
 		        });
 
 		  return d;
         },
 
-        makeGrid: function(){
+        setupGrid: function(){
         	var columns = {
-		        first: {
+		        Name: {
 		            label: "First Name"
 		        },
-		        last: {
+		        Description: {
 		            label: "Last Name"
 		        }
 		    };
 
-		    var data = this.getdataForDate(this.day);
-
 		    this.grid = new Grid({ columns: columns }, "grid"); // attach to a DOM id
-		    this.grid.renderArray(data);
         },
 
         getdataForDate: function(dateGiven){
@@ -104,6 +119,7 @@ define([
         reloadGrid: function(){
         	this.grid.refresh();
         	var data = this.getdataForDate(this.day);
+        	this.title.innerHTML = this.day.toUTCString();
         	this.grid.renderArray(data);
         }
 
