@@ -1,3 +1,5 @@
 #ignore files
 */dojo
 *dojo/
+./dojo
+*.DS_Store
