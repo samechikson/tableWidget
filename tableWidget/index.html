@@ -2,13 +2,17 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Tutorial: Hello Dojo!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grid Widget</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/custom.css">
+    <!--<link rel="stylesheet" type="text/css" href="../dojo/dgrid/css/dgrid.css">-->
 </head>
 <body>
     <div id="insert"></div>
     <div id="grid"></div>
     <!-- load Dojo -->
-    <script src="../dojo/dojo/dojo.js" data-dojo-config="async: true,
+   <!-- <script src="../dojo/dojo/dojo.js" data-dojo-config="async: true,
             packages: [{
 	            name: 'widget',
 	            location: location.pathname.replace(/\/[^/]+$/, '') + '/widget'
@@ -18,6 +22,26 @@
 	            location: location.pathname.replace(/\/[^/]+$/, '') + '../dojo/dgrid'
        		}
        		]">
+    </script>-->
+   <script src="//ajax.googleapis.com/ajax/libs/dojo/1.9.1/dojo/dojo.js"
+     data-dojo-config="async: true,
+            packages: [{
+              name: 'widget',
+              location: location.pathname.replace(/\/[^/]+$/, '') + '/widget'
+          },
+          {
+              name: 'dgrid',
+              location: location.pathname.replace(/\/[^/]+$/, '') + '/../../libraries/dgrid'
+          },
+          {
+              name: 'put-selector',
+              location: location.pathname.replace(/\/[^/]+$/, '') + '/../../libraries/put-selector'
+          },
+          {
+              name: 'xstyle',
+              location: location.pathname.replace(/\/[^/]+$/, '') + '/../../libraries/xstyle'
+          }
+          ]">
     </script>
 </body>
 </html>

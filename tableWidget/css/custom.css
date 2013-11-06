@@ -1,0 +1,20 @@
+/*Extra Styles*/
+
+.buttonContainer{
+	margin-top: 20px;
+	margin-bottom: 10px;
+}
+
+.buttonContainer button:first-child{
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+}
+
+.buttonContainer button:nth-child(2){
+	border-radius: 0;
+}
+
+.buttonContainer button:last-child{
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+}

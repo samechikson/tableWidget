@@ -4,6 +4,7 @@ define([
     "dojo/parser", 
     "dojo/ready",
     "dojo/dom",
+    "dojo/dom-class",
     "dojo/_base/xhr",
     "dojo/date",
     "dojo/date/locale",
@@ -15,6 +16,7 @@ define([
 			parser, 
 			ready,
 			dom,
+            domClass,
 			xhr,
 			date,
 			locale,
@@ -23,6 +25,7 @@ define([
 			_WidgetBase){
     declare("TableWidget", [_WidgetBase], {
     	day: new Date(),
+        dateFormat: "EEEE, MMMM d, yyyy",
 	    
         constructor: function(domNode){
         	var _this = this;
@@ -54,7 +57,7 @@ define([
         getData: function(){
         	// get some data, convert to JSON
 		  var d = xhr.get({
-		        //url:"http://api.serviceu.com/rest/events/occurrences?orgKey=963d555c-3a00-4cbd-b08a-acc2c0fadc00&nextDays=2&format=json",
+		        //url:"http://api.serviceu.com/rest/events/occurrences?orgKey=963d555c-3a00-4cbd-b08a-acc2c0fadc00&nextDays=5&format=json",
 		        url: "widget/samplejson.json",
 		        handleAs:"json"
 		        });
@@ -65,14 +68,15 @@ define([
         setupGrid: function(){
         	var columns = {
 		        Name: {
-		            label: "First Name"
+		            label: "Title"
 		        },
 		        Description: {
-		            label: "Last Name"
+		            label: "Description"
 		        }
 		    };
 
 		    this.grid = new Grid({ columns: columns }, "grid"); // attach to a DOM id
+            domClass.add(this.grid, "table");
         },
 
         getdataForDate: function(dateGiven){
@@ -88,11 +92,15 @@ define([
 
         buildRendering: function(){
             // create the DOM for this widget
-            this.title = domConstruct.create("h2", {innerHTML: new Date().toUTCString()}, this.domNode, "end")
+            domClass.add(this.domNode, "row");
+            var titleAttr = {innerHTML: locale.format(new Date(), {selector:"date", datePattern:this.dateFormat}),
+                             class: "col-md-9"}
+            this.title = domConstruct.create("h2", titleAttr, this.domNode, "end")
 
-            this.previous = domConstruct.create("button", {innerHTML: "previous"}, this.domNode, "end");
-            this.today = domConstruct.create("button", {innerHTML: "today"}, this.domNode, "end");
-            this.next = domConstruct.create("button", {innerHTML: "next"}, this.domNode, "end");
+            this.buttonContainer = domConstruct.create("div", {class:"buttonContainer col-md-3"}, this.domNode, "end");
+            this.previous = domConstruct.create("button", {innerHTML: "previous", class:"btn btn-default"}, this.buttonContainer, "end");
+            this.today = domConstruct.create("button", {innerHTML: "today", class:"btn btn-default"}, this.buttonContainer, "end");
+            this.next = domConstruct.create("button", {innerHTML: "next", class:"btn btn-default"}, this.buttonContainer, "end");
         },
 
         postCreate: function(){
@@ -119,7 +127,7 @@ define([
         reloadGrid: function(){
         	this.grid.refresh();
         	var data = this.getdataForDate(this.day);
-        	this.title.innerHTML = this.day.toUTCString();
+        	this.title.innerHTML = locale.format( this.day, {selector:"date", datePattern:this.dateFormat } )
         	this.grid.renderArray(data);
         }
 
